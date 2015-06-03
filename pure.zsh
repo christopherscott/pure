@@ -82,19 +82,20 @@ prompt_pure_preprompt_render() {
 	[[ -n ${prompt_pure_cmd_timestamp+x} && "$1" != "precmd" ]] && return
 
 	# set color for git branch/dirty status, change color if dirty checking has been delayed
-	local git_color=242
+	local git_color=220
 	[[ -n ${prompt_pure_git_delay_dirty_check+x} ]] && git_color=red
 
 	# construct prompt, beginning with path
-	local prompt="%F{blue}%~%f"
+	local prompt=""
+	prompt+=$prompt_pure_username
+	prompt+=" %F{238}%~%f"
 	# git info
 	prompt+="%F{$git_color}${vcs_info_msg_0_}${prompt_pure_git_dirty}%f"
 	# git pull/push arrows
 	prompt+="%F{cyan}${prompt_pure_git_arrows}%f"
 	# username and machine if applicable
-	prompt+=$prompt_pure_username
 	# execution time
-	prompt+="%F{yellow}${prompt_pure_cmd_exec_time}%f"
+	prompt+="%F{166}${prompt_pure_cmd_exec_time}%f"
 
 	# if executing through precmd, do not perform fancy terminal editing
 	if [[ "$1" == "precmd" ]]; then
@@ -259,13 +260,13 @@ prompt_pure_setup() {
 	zstyle ':vcs_info:git*' actionformats ' %b|%a'
 
 	# show username@host if logged in through SSH
-	[[ "$SSH_CONNECTION" != '' ]] && prompt_pure_username=' %F{242}%n@%m%f'
+	prompt_pure_username='%F{238}[%F{white}%n%f%F{242}%F{238}@%F{white}%m%f%F{238}]'
 
 	# show username@host if root, with username in white
-	[[ $UID -eq 0 ]] && prompt_pure_username=' %F{white}%n%f%F{242}@%m%f'
+	[[ $UID -eq 0 ]] && prompt_pure_username='%F{238}[%F{white}%n%f%F{242}%F{238}@%F{white}%m%f%F{238}]'
 
 	# prompt turns red if the previous command didn't exit with 0
-	PROMPT="%(?.%F{magenta}.%F{red})${PURE_PROMPT_SYMBOL:-❯}%f "
+	PROMPT="%(?.%F{green}.%F{red})${PURE_PROMPT_SYMBOL:-❯}%f "
 }
 
 prompt_pure_setup "$@"
